@@ -2,7 +2,6 @@ import os
 import fastf1 as ff1
 from fastf1 import plotting
 from matplotlib import pyplot as plt
-from matplotlib.pyplot import figure
 
 # Setup Plotting
 plotting.setup_mpl()
@@ -15,12 +14,17 @@ if not os.path.exists('cache'):
 ff1.Cache.enable_cache('cache')
 
 # Load Session Data
-race1 = ff1.get_session(2021, "Zandvoort", 'R')
+year = int(input("Enter Year: \n"))
+event_name = input("Enter Event Name (i.e. Monza): \n")
+session_type = input("Enter Session Type (Race, Quali, etc.):\n")
+
+race1 = ff1.get_session(year, event_name, session_type)
 
 # Collect all race laps
 race1.load(telemetry=True, laps=True)
 session_laps = race1.laps
 
+# Define driver colors
 driver_colors = {
     "BOT": "Blue",
     "HAM": "Purple",
@@ -38,57 +42,61 @@ driver_colors = {
     "TSU": "Red",
     "LAT": "#000000",  # Black
     "RUS": "#37a4ee",  # Blue from Russell's Helmet
-    "RAI": "#86995B", # Lotus Gold
-    "GIO" : "#009246",  # Italian Flag Green
-    "OCO": "#F363B9", # BWT Pink
-    "RIC": "#94d0d2", # Color from 2021 Helmet
-    "ZHO" : "#52E252", # Kick Sauber Green
-    "SAR" : "64C4FF", # Williams Blue
-    "ALB" : "#FF98E5", # Pink from 2024 Helmet
-
+    "RAI": "#86995B",  # Lotus Gold
+    "GIO": "#009246",  # Italian Flag Green
+    "OCO": "#F363B9",  # BWT Pink
+    "RIC": "#94d0d2",  # Color from 2021 Helmet
+    "ZHO": "#52E252",  # Kick Sauber Green
+    "SAR": "64C4FF",   # Williams Blue
+    "ALB": "#FF98E5",  # Pink from 2024 Helmet
     # Add more drivers and colors as needed
 }
 
-# Debug: Check if session_laps is loaded correctly
-print(f"Loaded laps: {session_laps}")
+# Function to get valid driver input from user
+def get_valid_driver_input():
+    while True:
+        driver_input = input("Enter a driver identifier (e.g., BOT, HAM, VET, etc.): ").strip().upper()
+        if driver_input in driver_colors:
+            return driver_input
+        else:
+            print(f"Driver '{driver_input}' not found. Please enter a valid driver identifier.")
 
-# Get laps of Drivers
-laps_bot = session_laps.pick_drivers("BOT")
-laps_ham = session_laps.pick_drivers("HAM")
+# Get user inputs for drivers
+print("Enter the first driver:")
+driver1 = get_valid_driver_input()
 
-# Debug: Check if laps are correctly filtered
-print(f"Laps for BOT: {laps_bot}")
-print(f"Laps for HAM: {laps_ham}")
+print("Enter the second driver:")
+driver2 = get_valid_driver_input()
 
-# Extract the fastest laps
-fastest_bot = laps_bot.pick_fastest()
-fastest_ham = laps_ham.pick_fastest()
+# Pick the drivers you want to compare
+drivers = [driver1, driver2]
 
-# Debug: Check if fastest laps are correctly extracted
-print(f"Fastest lap for BOT: {fastest_bot}")
-print(f"Fastest lap for HAM: {fastest_ham}")
+# Extract the fastest laps and telemetry data for each driver
+fastest_laps = {}
+telemetry_data = {}
 
-# Get Telemetry from the Fastest Laps
-telemetry_bot = fastest_bot.get_car_data().add_distance()
-telemetry_ham = fastest_ham.get_car_data().add_distance()
-
-# Debug: Check if telemetry data is correctly processed
-print(f"Telemetry for BOT: {telemetry_bot}")
-print(f"Telemetry for HAM: {telemetry_ham}")
+for driver in drivers:
+    laps = session_laps.pick_drivers(driver)
+    fastest_lap = laps.pick_fastest()
+    telemetry = fastest_lap.get_car_data().add_distance()
+    fastest_laps[driver] = fastest_lap
+    telemetry_data[driver] = telemetry
 
 # Plot Data
 fig, ax = plt.subplots(3)
-fig.suptitle("Fastest Race Lap Telemetry Comparison for the {} {}".format(race1.event.year, race1.event["EventName"]))
+fig.suptitle(f"Fastest Race Lap Telemetry Comparison in {year} for {event_name}")
 
-ax[0].plot(telemetry_bot['Distance'], telemetry_bot['Speed'], label='BOT', color="Blue")
-ax[0].plot(telemetry_ham['Distance'], telemetry_ham['Speed'], label='HAM', color="Purple")
+for driver, telemetry in telemetry_data.items():
+    color = driver_colors.get(driver, "Black")  # Default to black if color not found
+    ax[0].plot(telemetry['Distance'], telemetry['Speed'], label=driver, color=color)
+    ax[1].plot(telemetry['Distance'], telemetry['Throttle'], label=driver, color=color)
+    ax[2].plot(telemetry['Distance'], telemetry['Brake'], label=driver, color=color)
+
 ax[0].set(ylabel='Speed')
 ax[0].legend(loc="lower right")
-ax[1].plot(telemetry_bot['Distance'], telemetry_bot['Throttle'], label='BOT', color="Blue")
-ax[1].plot(telemetry_ham['Distance'], telemetry_ham['Throttle'], label='HAM', color="Purple")
+
 ax[1].set(ylabel='Throttle')
-ax[2].plot(telemetry_bot['Distance'], telemetry_bot['Brake'], label='BOT', color="Blue")
-ax[2].plot(telemetry_ham['Distance'], telemetry_ham['Brake'], label='HAM', color="Purple")
+
 ax[2].set(ylabel='Brakes')
 
 # Hide x labels and tick labels for top plots and y ticks for right plots
