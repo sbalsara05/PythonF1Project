@@ -1,12 +1,14 @@
 import pytest
 import fastf1
 
+
 @pytest.fixture(scope="module")
 def session_data():
     # Load session data (example: 2023 Bahrain Grand Prix, Qualifying)
     session = fastf1.get_session(2023, 'Bahrain', 'Q')
     session.load()
     return session
+
 
 def test_get_session_data(session_data):
     session_laps = session_data.laps
@@ -24,6 +26,7 @@ def test_get_session_data(session_data):
     # Optionally print laps_bot for debugging purposes (remove in production)
     print(laps_bot)
 
+
 def test_pick_multiple_drivers(session_data):
     session_laps = session_data.laps
 
@@ -39,6 +42,7 @@ def test_pick_multiple_drivers(session_data):
     assert 'BOT' in drivers, "BOT laps not found"
     assert 'HAM' in drivers, "HAM laps not found"
 
+
 def test_pick_fastest_lap(session_data):
     session_laps = session_data.laps
 
@@ -51,6 +55,7 @@ def test_pick_fastest_lap(session_data):
 
     # Optionally print fastest_bot for debugging purposes (remove in production)
     print(fastest_bot)
+
 
 def test_telemetry_data(session_data):
     session_laps = session_data.laps
@@ -67,6 +72,7 @@ def test_telemetry_data(session_data):
 
     # Optionally print telemetry_bot for debugging purposes (remove in production)
     print(telemetry_bot)
+
 
 def test_cache_functionality():
     # Enable Cache
@@ -89,6 +95,7 @@ def test_cache_functionality():
     # Optionally print session_laps for debugging purposes (remove in production)
     print(session_laps_first_load)
     print(session_laps_second_load)
+
 
 if __name__ == "__main__":
     pytest.main()
