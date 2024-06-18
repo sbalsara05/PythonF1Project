@@ -26,7 +26,7 @@ print(f"Loaded laps: {session_laps}")
 
 # Get laps of Drivers
 laps_bot = session_laps.pick_drivers("BOT")
-laps_ham = session_laps.pick_drivers(44)
+laps_ham = session_laps.pick_drivers("HAM")
 
 # Debug: Check if laps are correctly filtered
 print(f"Laps for BOT: {laps_bot}")
