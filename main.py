@@ -15,8 +15,8 @@ ff1.Cache.enable_cache('cache')
 
 # Load Session Data
 year = int(input("Enter Year: \n"))
-event_name = input("Enter Event Name (i.e. Monza): \n")
-session_type = input("Enter Session Type (Race, Quali, etc.):\n")
+event_name = input("Enter Race: (i.e. Monza): \n")
+session_type = input("Enter Session Type (Race, Qualifying, etc.):\n")
 
 race1 = ff1.get_session(year, event_name, session_type)
 
@@ -63,10 +63,10 @@ def get_valid_driver_input():
 
 # Get user inputs for drivers
 print("Enter the first driver:")
-driver1 = get_valid_driver_input()
+driver1 = get_valid_driver_input().upper()
 
 print("Enter the second driver:")
-driver2 = get_valid_driver_input()
+driver2 = get_valid_driver_input().upper()
 
 # Pick the drivers you want to compare
 drivers = [driver1, driver2]
@@ -84,7 +84,7 @@ for driver in drivers:
 
 # Plot Data
 fig, ax = plt.subplots(3)
-fig.suptitle(f"Fastest Race Lap Telemetry Comparison in {year} for {event_name}")
+fig.suptitle(f"Fastest {session_type} Lap Telemetry Comparison in {year} for {event_name}")
 
 for driver, telemetry in telemetry_data.items():
     color = driver_colors.get(driver, "Black")  # Default to black if color not found
