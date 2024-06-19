@@ -84,7 +84,7 @@ for driver in drivers:
 
 # Plot Data
 fig, ax = plt.subplots(3)
-fig.suptitle(f"Fastest {session_type} Lap Telemetry Comparison in {year} for {event_name}")
+fig.suptitle(f"Fastest {session_type} Lap Telemetry Comparison in {year} for {event_name} Grand Prix")
 
 for driver, telemetry in telemetry_data.items():
     color = driver_colors.get(driver, "Black")  # Default to black if color not found
