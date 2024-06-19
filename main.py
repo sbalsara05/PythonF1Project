@@ -93,11 +93,15 @@ for driver, telemetry in telemetry_data.items():
     ax[2].plot(telemetry['Distance'], telemetry['Brake'], label=driver, color=color)
 
 ax[0].set(ylabel='Speed')
+ax[0].set(xlabel='Distance in Meters')
 ax[0].legend(loc="lower right")
 
 ax[1].set(ylabel='Throttle')
+ax[1].set(xlabel='Distance in Meters')
 
 ax[2].set(ylabel='Brakes')
+ax[2].set(xlabel='Distance in Meters')
+
 
 # Hide x labels and tick labels for top plots and y ticks for right plots
 for a in ax.flat:
